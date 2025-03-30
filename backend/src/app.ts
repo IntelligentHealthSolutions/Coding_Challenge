@@ -52,7 +52,29 @@ app.post('/api/tasks', async (req, res) => {
   return
 })
 
-/* Create your new route here */
+
+/* Create your new route here */ 
+app.put('/api/tasks/:id', async (req, res) => {  
+  const { id } = req.params;  
+  const { name, due, description, complete } = req.body.task; 
+  try {
+    const updatedTask = await TaskModel.findByIdAndUpdate(  
+      id,  
+      { name, due, description, complete },  
+      { new: true, runValidators: true }  
+    );  
+ if (!updatedTask) {  
+      return res.status(404).json({ message: 'Task not found' });  
+    }   
+    res.status(200).json({  
+      message: 'Task updated successfully',  
+      task: updatedTask  
+    });  
+  } catch (error) {  
+    console.error(error);  
+    res.status(400).json({ message: 'Error updating task', error });  
+  }  
+});
 
 app.delete('/api/tasks/:id', async (req, res) => {
   const { id } = req.params

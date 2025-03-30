@@ -27,7 +27,12 @@ export class TaskService {
    * This is the only function that you'll need to change in this service.
    * It should update an already existing task entry with new information entered by the user
    */
-  updateTask(id: string, task: Task): void { }
+updateTask(id: string, task: Task): void {  
+    this.http.put(`${this.apiUrl}/${id}`, { task }).subscribe({  
+      next: () => this.refreshTasks(),  
+      error: (err) => console.error('Error updating task:', err)  
+    });  
+  } 
 
   createTask(newTask: Task): void {
     this.http.post(this.apiUrl, { task: newTask }).subscribe({

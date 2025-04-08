@@ -10,6 +10,7 @@ export class TaskService {
   private apiUrl = 'http://localhost:5200/api/tasks'
   private tasksSubject = new BehaviorSubject<Array<TaskAndId>>([]);
   tasks$ = this.tasksSubject.asObservable();
+  private taskdata : any
 
   constructor(private http: HttpClient) { }
 
@@ -20,14 +21,25 @@ export class TaskService {
 
   refreshTasks() {
     this.http.get<Array<TaskAndId>>(this.apiUrl).subscribe(
-      tasks => this.tasksSubject.next(tasks));
+      (tasks: any) => this.tasksSubject.next(tasks));
+  }
+
+  getTaskById(taskId : string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/${taskId}`)
   }
 
   /*
    * This is the only function that you'll need to change in this service.
    * It should update an already existing task entry with new information entered by the user
    */
-  updateTask(id: string, task: Task): void { }
+
+  updateTask(id: string , task : Task): void {
+   this.getTaskById(id).subscribe((data:any)=>{
+    this.http.put(`${this.apiUrl}/${id}` , { task }).subscribe((response:any) =>{
+      console.log(this.refreshTasks())
+    })
+   })
+  }
 
   createTask(newTask: Task): void {
     this.http.post(this.apiUrl, { task: newTask }).subscribe({

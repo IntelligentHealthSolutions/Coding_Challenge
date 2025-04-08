@@ -3,7 +3,8 @@ import bodyParser from 'body-parser'
 import { Task } from './task-types.js'
 import cors from 'cors'
 import mongoose from 'mongoose'
-import TaskModel from './task-model.js';
+import TaskModel from './task-model.js'
+import {ObjectId} from 'mongodb';
 
 const app = express()
 const tasks: Array<Task> = [{
@@ -44,6 +45,13 @@ app.get('/api/tasks', async (req, res) => {
   return
 })
 
+app.get('/api/tasks/:id', async (req, res) => {
+  const { id } = req.params
+  const tasks = await TaskModel.findOne({ _id : new ObjectId(id)})
+  res.json(tasks)
+  return
+})
+
 app.post('/api/tasks', async (req, res) => {
   const { task } = req.body
   console.log(task)
@@ -58,6 +66,19 @@ app.delete('/api/tasks/:id', async (req, res) => {
   const { id } = req.params
   try {
     await TaskModel.findByIdAndDelete(id)
+    res.status(204).send()
+    return
+  } catch (e) {
+    console.log(e)
+    res.status(404).send()
+    return
+  }
+})
+
+
+app.put('/api/tasks/:id', async (req, res) => {
+  try {
+    await TaskModel.updateOne({_id: new ObjectId(req.params.id)}, {$set:req.body.task} )
     res.status(204).send()
     return
   } catch (e) {

@@ -3,7 +3,7 @@ import bodyParser from 'body-parser'
 import { Task } from './task-types.js'
 import cors from 'cors'
 import mongoose from 'mongoose'
-import TaskModel from './task-model.js'
+import TaskModel from './task-model.js';
 
 const app = express()
 const tasks: Array<Task> = [{
